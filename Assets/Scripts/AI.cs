@@ -46,7 +46,7 @@ public class AI : MonoBehaviour
         {
             if (Vector3.Distance(target.position, transform.position) < 10)
             {
-                body.velocity = Evade() + Wander() + Avoid();
+                body.velocity = (Evade() + Wander() + Avoid()) / 2;
             }
             else
             {
@@ -70,7 +70,7 @@ public class AI : MonoBehaviour
     {
         float angle = Mathf.Atan2(v.x + a.x, v.z + a.z) * (180 / Mathf.PI);
         Quaternion targetAngle = Quaternion.Euler(0, angle, 0);
-        float turnSpeed = -Mathf.Abs(targetAngle.eulerAngles.y - transform.eulerAngles.y) / (Vector3.Distance(target.position, transform.position) * 100);
+        float turnSpeed = -Mathf.Abs(targetAngle.eulerAngles.y - transform.eulerAngles.y) / (Vector3.Distance(target.position, transform.position) * 500);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetAngle, turnSpeed);
     }
     void WanderRotateAI()
@@ -115,13 +115,13 @@ public class AI : MonoBehaviour
                 {
                     return ((transform.right * 3) / Vector3.Distance(transform.position, hit.point)) * speed;
                 }
-                Debug.DrawRay(transform.position, (transform.forward * 3) - transform.up + transform.right, Color.yellow);
-                if (!Physics.Raycast(transform.position, (transform.forward * 3) - transform.up + transform.right, out hit, obstacles))
+                Debug.DrawRay(transform.position, (transform.forward * 3) - (transform.up / 2) + transform.right, Color.yellow);
+                if (!Physics.Raycast(transform.position, (transform.forward * 3) - (transform.up / 2) + transform.right, out hit, obstacles))
                 {
                     return -(transform.right) * speed;
                 }
-                Debug.DrawRay(transform.position, (transform.forward * 3) - transform.up - transform.right, Color.yellow);
-                if (!Physics.Raycast(transform.position, (transform.forward * 3) - transform.up - transform.right, out hit, obstacles))
+                Debug.DrawRay(transform.position, (transform.forward * 3) - (transform.up / 2) - transform.right, Color.yellow);
+                if (!Physics.Raycast(transform.position, (transform.forward * 3) - (transform.up / 2) - transform.right, out hit, obstacles))
                 {
                     return (transform.right) * speed;
                 }
@@ -133,8 +133,8 @@ public class AI : MonoBehaviour
                 {
                     return -((transform.forward * 5) / Vector3.Distance(transform.position, hit.point)) * speed;
                 }
-                Debug.DrawRay(transform.position, (transform.forward * 4) - transform.up, Color.yellow);
-                if (!Physics.Raycast(transform.position, (transform.forward * 4) - transform.up, out hit, obstacles))
+                Debug.DrawRay(transform.position, (transform.forward * 4) - (transform.up / 2), Color.yellow);
+                if (!Physics.Raycast(transform.position, (transform.forward * 4) - (transform.up / 2), out hit, obstacles))
                 {
                     return -(transform.forward * 5) * speed;
                 }
