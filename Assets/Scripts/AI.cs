@@ -61,7 +61,7 @@ public class AI : MonoBehaviour
 
     void PursueRotateAI()
     {
-        float angle = Mathf.Atan2(v.x + a.x, v.z + a.z) * (180/Mathf.PI);
+        float angle = Mathf.Atan2(v.x + a.x, v.z + a.z) * (180 / Mathf.PI);
         Quaternion targetAngle = Quaternion.Euler(0, angle, 0);
         float turnSpeed = Mathf.Abs(targetAngle.eulerAngles.y - transform.eulerAngles.y) / 100;
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetAngle, turnSpeed);
