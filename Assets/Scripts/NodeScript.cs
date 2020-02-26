@@ -14,6 +14,8 @@ public class NodeScript : MonoBehaviour
     public Node end;
     private Node endCheck = new Node();
 
+    List<Node> path = new List<Node>();
+
     private void Start()
     {
         graph = new Node[graphSize.y][];
@@ -70,20 +72,25 @@ public class NodeScript : MonoBehaviour
         }
         start = graph[0][0];
         end = graph[2][2];
-        DijkstrasAlgorithm(start, end);
+        DijkstrasAlgorithm();
     }
 
-    //private void Update()
-    //{
-    //    if (startCheck != start || endCheck != end)
-    //    {
-    //        DijkstrasAlgorithm(start, end);
-    //        startCheck = start;
-    //        endCheck = end;
-    //    }
-    //}
+    private void Update()
+    {
+        //if (startCheck != start || endCheck != end)
+        //{
+        //    DijkstrasAlgorithm(start, end);
+        //    startCheck = start;
+        //    endCheck = end;
+        //}
+        for (int i = 0; i < path.Count; i++)
+        {
+            Debug.DrawLine(path[i].location + new Vector3(0, 1, 0), path[i].previous.location + new Vector3(0, 1, 0), Color.red);
+        }
+        Debug.DrawLine(start.location + new Vector3(0, 0.1f, 0), end.location + new Vector3(0, 0.1f, 0), Color.grey);
+    }
 
-    void DijkstrasAlgorithm(Node start, Node end)
+    void DijkstrasAlgorithm()
     {
         Node cur;
         List<Node> openList = new List<Node>();
@@ -92,35 +99,6 @@ public class NodeScript : MonoBehaviour
         int failSafe = 0;
         while (openList.Count != 0 && failSafe < 100)
         {
-            cur = openList[0];
-            openList.RemoveAt(0);
-            closedList.Add(cur);
-            
-            if (cur.north != null)
-            {
-                cur.north.gScore += cur.gScore;
-                cur.north.previous = cur;
-                openList.Add(cur.north);
-            }
-            if (cur.south != null)
-            {
-                cur.south.gScore += cur.gScore;
-                cur.south.previous = cur;
-                openList.Add(cur.south);
-            }
-            if (cur.east != null)
-            {
-                cur.east.gScore += cur.gScore;
-                cur.east.previous = cur;
-                openList.Add(cur.east);
-            }
-            if (cur.west != null)
-            {
-                cur.west.gScore += cur.gScore;
-                cur.west.previous = cur;
-                openList.Add(cur.west);
-            }
-
             for (int i = 0; i < openList.Count; i++)
             {
                 bool isSorted = true;
@@ -143,12 +121,102 @@ public class NodeScript : MonoBehaviour
                 }
             }
 
+            cur = openList[0];
+            openList.RemoveAt(0);
+            closedList.Add(cur);
             if (cur == end)
             {
-
+                //end = cur;
+                break;
             }
-
+            
+            if (cur.north != null && cur.north != cur.previous)
+            {
+                bool isClosed = false;
+                foreach (Node node in closedList)
+                {
+                    if (cur.north == node)
+                    {
+                        isClosed = true;
+                    }
+                }
+                if (isClosed == false)
+                {
+                    if (cur.gScore + 1 < cur.north.gScore)
+                    {
+                        cur.north.gScore = cur.gScore + 1;
+                        cur.north.previous = cur;
+                    }
+                    openList.Add(cur.north);
+                }
+            }
+            if (cur.south != null && cur.south != cur.previous)
+            {
+                bool isClosed = false;
+                foreach (Node node in closedList)
+                {
+                    if (cur.south == node)
+                    {
+                        isClosed = true;
+                    }
+                }
+                if (isClosed == false)
+                {
+                    if (cur.gScore + 1 < cur.south.gScore)
+                    {
+                        cur.south.gScore = cur.gScore + 1;
+                        cur.south.previous = cur;
+                    }
+                    openList.Add(cur.south);
+                }
+            }
+            if (cur.east != null && cur.east != cur.previous)
+            {
+                bool isClosed = false;
+                foreach (Node node in closedList)
+                {
+                    if (cur.east == node)
+                    {
+                        isClosed = true;
+                    }
+                }
+                if (isClosed == false)
+                {
+                    if (cur.gScore + 1 < cur.east.gScore)
+                    {
+                        cur.east.gScore = cur.gScore + 1;
+                        cur.east.previous = cur;
+                    }
+                    openList.Add(cur.east);
+                }
+            }
+            if (cur.west != null && cur.west != cur.previous)
+            {
+                bool isClosed = false;
+                foreach (Node node in closedList)
+                {
+                    if (cur.west == node)
+                    {
+                        isClosed = true;
+                    }
+                }
+                if (isClosed == false)
+                {
+                    if (cur.gScore + 1 < cur.west.gScore)
+                    {
+                        cur.west.gScore = cur.gScore + 1;
+                        cur.west.previous = cur;
+                    }
+                    openList.Add(cur.west);
+                }
+            }
+            
             failSafe++;
+        }
+        Debug.Log(failSafe);
+        for (cur = end; cur.previous != null; cur = cur.previous)
+        {
+            path.Add(cur);
         }
     }
 }
@@ -157,7 +225,7 @@ public class Node
 {
     public GameObject tile;
     public Vector3 location;
-    public float gScore = 1;
+    public float gScore = 0;
 
     public Node north;
     public Node south;
